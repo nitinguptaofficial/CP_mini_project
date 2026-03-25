@@ -1,0 +1,200 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{{ app_name }}{% block title %}{% endblock %}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/styles.css') }}"
+    />
+  </head>
+  <body>
+    {% if current_user.is_authenticated %}
+    <div class="app-shell">
+      <aside class="sidebar d-flex flex-column" id="appSidebar">
+        <a class="brand" href="{{ url_for('core.index') }}">
+          <span class="brand-dot"><i class="bi bi-mortarboard-fill"></i></span>
+          <span>Smart Classroom</span>
+        </a>
+
+        <div class="nav-section">
+          {% if current_user.role == 'Teacher' %} {% set nav = [
+          ('teacher.dashboard', 'Dashboard', 'bi-speedometer2'),
+          ('teacher.attendance', 'Attendance', 'bi-calendar-check'),
+          ('teacher.assignments', 'Assignments', 'bi-journal-richtext'),
+          ('teacher.submissions', 'Submissions', 'bi-folder-check'),
+          ('teacher.analytics', 'Analytics', 'bi-graph-up') ] %} {% else %} {%
+          set nav = [ ('student.dashboard', 'Dashboard', 'bi-speedometer2'),
+          ('student.attendance', 'Attendance', 'bi-calendar-check'),
+          ('student.assignments', 'Assignments', 'bi-journal-richtext'),
+          ('student.grades', 'Grades', 'bi-award'), ('student.analytics',
+          'Analytics', 'bi-graph-up') ] %} {% endif %} {% for endpoint, label,
+          icon in nav %}
+          <a
+            class="nav-link-item {% if request.endpoint == endpoint %}active{% endif %}"
+            href="{{ url_for(endpoint) }}"
+          >
+            <span><i class="bi {{ icon }} me-2"></i>{{ label }}</span>
+          </a>
+          {% endfor %}
+          <a class="nav-link-item" href="#" aria-disabled="true">
+            <span><i class="bi bi-person-circle me-2"></i>Profile</span>
+          </a>
+        </div>
+
+        <div class="sidebar-footer">
+          <a class="nav-link-item" href="{{ url_for('auth.logout') }}">
+            <span><i class="bi bi-box-arrow-right me-2"></i>Logout</span>
+          </a>
+        </div>
+      </aside>
+
+      <section class="workspace">
+        <header class="topbar">
+          <div class="search-wrap">
+            <i class="bi bi-search search-icon"></i>
+            <input
+              class="form-control"
+              type="search"
+              placeholder="Search courses, assignments, students..."
+              aria-label="Search"
+            />
+          </div>
+          <div class="toolbar-actions">
+            <button
+              class="icon-btn d-lg-none"
+              id="sidebarToggle"
+              type="button"
+              aria-label="Toggle sidebar"
+            >
+              <i class="bi bi-list"></i>
+            </button>
+            <button
+              class="icon-btn"
+              id="darkModeToggle"
+              type="button"
+              aria-label="Toggle dark mode"
+            >
+              <i class="bi bi-moon-stars"></i>
+            </button>
+            <button class="icon-btn" type="button" aria-label="Notifications">
+              <i class="bi bi-bell"></i>
+            </button>
+            <div
+              class="btn-soft px-3 d-flex align-items-center gap-2"
+              role="button"
+              tabindex="0"
+            >
+              <i class="bi bi-person-circle"></i>
+              <span class="hidden-mobile">{{ current_user.name }}</span>
+            </div>
+          </div>
+        </header>
+        {% else %}
+        <nav class="navbar navbar-expand-lg bg-transparent">
+          <div class="container py-2">
+            <a class="brand" href="{{ url_for('core.index') }}">
+              <span class="brand-dot"
+                ><i class="bi bi-mortarboard-fill"></i
+              ></span>
+              <span class="text-dark">Smart Classroom</span>
+            </a>
+            <div class="ms-auto d-flex gap-2">
+              <a class="btn btn-soft px-3" href="{{ url_for('auth.login') }}"
+                >Login</a
+              >
+              <a
+                class="btn btn-primary px-3"
+                href="{{ url_for('auth.register') }}"
+                >Register</a
+              >
+            </div>
+          </div>
+        </nav>
+        {% endif %}
+
+        <main
+          class="{% if current_user.is_authenticated %}content-wrap{% else %}container pb-4{% endif %}"
+        >
+          {% block content %}{% endblock %}
+        </main>
+
+        {% if current_user.is_authenticated %}
+      </section>
+    </div>
+    {% endif %}
+
+    <div class="toast-container-custom" id="toastContainer"></div>
+    {% with messages = get_flashed_messages(with_categories=true) %} {% if
+    messages %}
+    <div
+      id="flashPayload"
+      class="d-none"
+      data-messages="{{ messages | tojson | safe }}"
+    ></div>
+    {% endif %} {% endwith %}
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+      const body = document.body;
+      const sidebar = document.getElementById("appSidebar");
+      const sidebarToggle = document.getElementById("sidebarToggle");
+      const darkToggle = document.getElementById("darkModeToggle");
+      const toastContainer = document.getElementById("toastContainer");
+
+      if (localStorage.getItem("scms_theme") === "dark") {
+        body.dataset.theme = "dark";
+      }
+
+      if (sidebarToggle && sidebar) {
+        sidebarToggle.addEventListener("click", () => {
+          sidebar.classList.toggle("open");
+        });
+      }
+
+      if (darkToggle) {
+        darkToggle.addEventListener("click", () => {
+          const nextTheme = body.dataset.theme === "dark" ? "light" : "dark";
+          if (nextTheme === "light") {
+            body.removeAttribute("data-theme");
+          } else {
+            body.dataset.theme = "dark";
+          }
+          localStorage.setItem("scms_theme", nextTheme);
+        });
+      }
+
+      function showToast(message) {
+        if (!toastContainer) return;
+        const toast = document.createElement("div");
+        toast.className = "toast-custom";
+        toast.innerText = message;
+        toastContainer.appendChild(toast);
+        setTimeout(() => toast.remove(), 3500);
+      }
+
+      const flashPayload = document.getElementById("flashPayload");
+      if (flashPayload) {
+        const messages = JSON.parse(flashPayload.dataset.messages || "[]");
+        messages.forEach((item) => showToast(item[1]));
+      }
+    </script>
+    {% block scripts %}{% endblock %}
+  </body>
+</html>

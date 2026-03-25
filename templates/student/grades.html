@@ -1,0 +1,46 @@
+{% extends 'base.html' %} {% block title %} - Grades{% endblock %} {% block
+content %}
+<section class="page-header">
+  <div>
+    <h1 class="page-title">Grades & Feedback</h1>
+    <p class="text-muted-soft mb-0">
+      Review your scored assignments and teacher feedback.
+    </p>
+  </div>
+</section>
+
+<article class="app-card p-3">
+  <div class="table-responsive">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Assignment</th>
+          <th>Marks</th>
+          <th>Feedback</th>
+          <th>Submitted At</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for item in submissions %}
+        <tr>
+          <td>{{ item.assignment.title }}</td>
+          <td>
+            <span class="badge status-badge submitted"
+              >{{ item.marks }}/{{ item.assignment.max_marks }}</span
+            >
+          </td>
+          <td>{{ item.feedback or '-' }}</td>
+          <td>{{ item.submitted_at.strftime('%Y-%m-%d %H:%M') }}</td>
+        </tr>
+        {% else %}
+        <tr>
+          <td colspan="4" class="text-center text-muted-soft">
+            No grades available yet.
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</article>
+{% endblock %}

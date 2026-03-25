@@ -1,0 +1,57 @@
+{% extends 'base.html' %} {% block title %} - Student Assignments{% endblock %}
+{% block content %}
+<section class="page-header">
+  <div>
+    <h1 class="page-title">Assignments</h1>
+    <p class="text-muted-soft mb-0">
+      Track deadlines, submit work, and monitor status updates.
+    </p>
+  </div>
+</section>
+
+<div class="row g-3">
+  {% for row in rows %}
+  <div class="col-lg-6">
+    <article class="app-card p-3 h-100">
+      <div class="d-flex justify-content-between align-items-start mb-2">
+        <h5 class="mb-0">{{ row.assignment.title }}</h5>
+        <span
+          class="badge status-badge {{ 'pending' if row.status == 'Not Submitted' else ('late' if row.status == 'Late' else 'submitted') }}"
+        >
+          {{ row.status }}
+        </span>
+      </div>
+      <p class="text-muted-soft mb-2">
+        Subject: {{ row.assignment.teacher.subject }}
+      </p>
+      <div class="small text-muted-soft mb-3">
+        <strong>Deadline:</strong> {{ row.assignment.deadline.strftime('%d %b
+        %Y, %H:%M') }}
+      </div>
+      <div class="d-flex flex-wrap gap-2">
+        <a
+          href="{{ url_for('student.submit_assignment', assignment_id=row.assignment.id) }}"
+          class="btn btn-primary btn-sm"
+        >
+          Upload / Re-upload
+        </a>
+        {% if row.submission %}
+        <a
+          href="{{ url_for('core.download_file', filename=row.submission.file_path) }}"
+          class="btn btn-soft btn-sm px-3"
+        >
+          View Submission
+        </a>
+        {% endif %}
+      </div>
+    </article>
+  </div>
+  {% else %}
+  <div class="col-12">
+    <article class="app-card p-4 text-center text-muted-soft">
+      No assignments available.
+    </article>
+  </div>
+  {% endfor %}
+</div>
+{% endblock %}

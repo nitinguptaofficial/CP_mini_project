@@ -1,0 +1,91 @@
+{% extends 'base.html' %} {% block title %} - Student Attendance{% endblock %}
+{% block content %}
+<section class="page-header">
+  <div>
+    <h1 class="page-title">Attendance Reports</h1>
+    <p class="text-muted-soft mb-0">
+      View subject-wise and monthly attendance trends.
+    </p>
+  </div>
+</section>
+
+<div class="row g-3">
+  <div class="col-lg-6">
+    <article class="app-card p-3 h-100">
+      <h5 class="mb-3">Subject-wise Attendance</h5>
+      <div class="table-responsive">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Subject</th>
+              <th>Present</th>
+              <th>Total</th>
+              <th>Percentage</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for item in subject_rows %}
+            <tr>
+              <td>{{ item.subject }}</td>
+              <td>{{ item.present }}</td>
+              <td>{{ item.total }}</td>
+              <td>
+                <span
+                  class="badge status-badge {{ 'submitted' if item.percent >= 75 else 'late' }}"
+                  >{{ item.percent }}%</span
+                >
+              </td>
+            </tr>
+            {% else %}
+            <tr>
+              <td colspan="4" class="text-center text-muted-soft">
+                No attendance records.
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </article>
+  </div>
+
+  <div class="col-lg-6">
+    <article class="app-card p-3 h-100">
+      <h5 class="mb-3">Monthly Report</h5>
+      <div class="table-responsive">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Month</th>
+              <th>Present</th>
+              <th>Total</th>
+              <th>Percentage</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for item in monthly_rows %}
+            <tr>
+              <td>{{ item.month }}</td>
+              <td>{{ item.present }}</td>
+              <td>{{ item.total }}</td>
+              <td>
+                <span
+                  class="badge status-badge {{ 'submitted' if item.percent >= 75 else 'pending' }}"
+                  >{{ item.percent }}%</span
+                >
+              </td>
+            </tr>
+            {% else %}
+            <tr>
+              <td colspan="4" class="text-center text-muted-soft">
+                No monthly records.
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </article>
+  </div>
+</div>
+{% endblock %}

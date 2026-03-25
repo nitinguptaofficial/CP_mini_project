@@ -1,0 +1,123 @@
+{% extends 'base.html' %} {% block title %} - Teacher Dashboard{% endblock %} {%
+block content %}
+<section class="page-header">
+  <div>
+    <h1 class="page-title">Teacher Dashboard</h1>
+    <p class="text-muted-soft mb-0">
+      Track attendance, submissions, and class performance at a glance.
+    </p>
+  </div>
+  <div class="d-flex gap-2">
+    <a href="{{ url_for('teacher.attendance') }}" class="btn btn-primary"
+      >Mark Attendance</a
+    >
+    <a href="{{ url_for('teacher.assignments') }}" class="btn btn-soft px-3"
+      >Create Assignment</a
+    >
+  </div>
+</section>
+
+<div class="row g-3 mb-3">
+  <div class="col-lg-3 col-md-6">
+    <article class="app-card kpi-card h-100">
+      <div class="kpi-label">Total Students</div>
+      <div class="kpi-value">{{ stats.total_students }}</div>
+    </article>
+  </div>
+  <div class="col-lg-3 col-md-6">
+    <article class="app-card kpi-card h-100">
+      <div class="kpi-label">Attendance Rate</div>
+      <div class="kpi-value">{{ stats.attendance_overview }}%</div>
+    </article>
+  </div>
+  <div class="col-lg-3 col-md-6">
+    <article class="app-card kpi-card h-100">
+      <div class="kpi-label">Pending Assignments</div>
+      <div class="kpi-value">{{ stats.pending_assignments }}</div>
+    </article>
+  </div>
+  <div class="col-lg-3 col-md-6">
+    <article class="app-card kpi-card h-100">
+      <div class="kpi-label">Recent Submissions</div>
+      <div class="kpi-value">{{ stats.recent_submissions|length }}</div>
+    </article>
+  </div>
+</div>
+
+<div class="row g-3">
+  <div class="col-lg-5">
+    <article class="app-card p-3 h-100">
+      <h5 class="mb-3">Submission Stats</h5>
+      <canvas id="submissionStatsChart" height="220"></canvas>
+    </article>
+  </div>
+  <div class="col-lg-7">
+    <article class="app-card p-3 h-100">
+      <h5 class="mb-3">Recent Submission Feed</h5>
+      <div class="table-responsive">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Student</th>
+              <th>Assignment</th>
+              <th>Submitted At</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for item in stats.recent_submissions %}
+            <tr>
+              <td>{{ item.student_user.user.name }}</td>
+              <td>{{ item.assignment.title }}</td>
+              <td>{{ item.submitted_at.strftime('%Y-%m-%d %H:%M') }}</td>
+              <td>
+                <span
+                  class="badge status-badge {{ 'late' if item.status == 'Late' else 'submitted' }}"
+                  >{{ item.status }}</span
+                >
+              </td>
+            </tr>
+            {% else %}
+            <tr>
+              <td colspan="4" class="text-center text-muted-soft">
+                No submissions yet.
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </article>
+  </div>
+</div>
+<div
+  id="submissionStatsData"
+  class="d-none"
+  data-recent="{{ stats.recent_submissions|length }}"
+  data-pending="{{ stats.pending_assignments }}"
+></div>
+{% endblock %} {% block scripts %}
+<script>
+  const statsData = document.getElementById("submissionStatsData");
+  const recentCount = Number(statsData?.dataset.recent || 0);
+  const pendingCount = Number(statsData?.dataset.pending || 0);
+  const submissionStatsCtx = document.getElementById("submissionStatsChart");
+  if (submissionStatsCtx) {
+    new Chart(submissionStatsCtx, {
+      type: "bar",
+      data: {
+        labels: ["Recent", "Pending"],
+        datasets: [
+          {
+            label: "Assignments",
+            data: [recentCount, pendingCount],
+            backgroundColor: ["#4f46e5", "#f59e0b"],
+            borderRadius: 10,
+          },
+        ],
+      },
+      options: { responsive: true, plugins: { legend: { display: false } } },
+    });
+  }
+</script>
+{% endblock %}

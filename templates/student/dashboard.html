@@ -1,0 +1,91 @@
+{% extends 'base.html' %} {% block title %} - Student Dashboard{% endblock %} {%
+block content %}
+<section class="page-header">
+  <div>
+    <h1 class="page-title">Student Dashboard</h1>
+    <p class="text-muted-soft mb-0">
+      Stay on top of classes, deadlines, and performance.
+    </p>
+  </div>
+</section>
+
+{% if warning %}
+<div class="toast-custom mb-3 border-start border-danger border-3">
+  {{ warning }}
+</div>
+{% endif %}
+
+<div class="row g-3 mb-3">
+  <div class="col-lg-4">
+    <article
+      class="app-card p-3 h-100 d-flex align-items-center justify-content-between"
+    >
+      <div>
+        <p class="kpi-label mb-1">Attendance Progress</p>
+        <h3 class="mb-0">{{ stats.attendance_percent }}%</h3>
+      </div>
+      <div
+        class="progress-ring"
+        style="--percent: {{ stats.attendance_percent }}"
+      >
+        {{ stats.attendance_percent }}%
+      </div>
+    </article>
+  </div>
+  <div class="col-lg-4">
+    <article class="app-card kpi-card h-100">
+      <div class="kpi-label">Pending Deadlines</div>
+      <div class="kpi-value">{{ stats.upcoming_deadlines|length }}</div>
+    </article>
+  </div>
+  <div class="col-lg-4">
+    <article class="app-card kpi-card h-100">
+      <div class="kpi-label">Recent Grades</div>
+      <div class="kpi-value">{{ stats.recent_grades|length }}</div>
+    </article>
+  </div>
+</div>
+
+<div class="row g-3">
+  <div class="col-lg-6">
+    <article class="app-card p-3 h-100">
+      <h5 class="mb-3">Today's Schedule & Deadlines</h5>
+      <ul class="list-group list-group-flush">
+        {% for item in stats.upcoming_deadlines %}
+        <li
+          class="list-group-item bg-transparent px-0 d-flex justify-content-between"
+        >
+          <span>{{ item.title }}</span>
+          <span class="text-muted-soft"
+            >{{ item.deadline.strftime('%d %b, %Y') }}</span
+          >
+        </li>
+        {% else %}
+        <li class="list-group-item bg-transparent px-0 text-muted-soft">
+          No upcoming deadlines.
+        </li>
+        {% endfor %}
+      </ul>
+    </article>
+  </div>
+  <div class="col-lg-6">
+    <article class="app-card p-3 h-100">
+      <h5 class="mb-3">Recent Grades Overview</h5>
+      <ul class="list-group list-group-flush">
+        {% for item in stats.recent_grades %}
+        <li
+          class="list-group-item bg-transparent px-0 d-flex justify-content-between"
+        >
+          <span>{{ item.assignment.title }}</span>
+          <span class="badge status-badge submitted">{{ item.marks }}</span>
+        </li>
+        {% else %}
+        <li class="list-group-item bg-transparent px-0 text-muted-soft">
+          No graded assignments yet.
+        </li>
+        {% endfor %}
+      </ul>
+    </article>
+  </div>
+</div>
+{% endblock %}

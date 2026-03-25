@@ -1,0 +1,102 @@
+{% extends 'base.html' %} {% block title %} - Submissions{% endblock %} {% block
+content %}
+<section class="page-header">
+  <div>
+    <h1 class="page-title">Submission & Grading</h1>
+    <p class="text-muted-soft mb-0">
+      Review submissions, download files, and grade efficiently.
+    </p>
+  </div>
+</section>
+
+<article class="app-card p-3 mb-3">
+  <form method="GET" class="row g-3 align-items-end">
+    <div class="col-md-8">
+      <label class="form-label">Select Assignment</label>
+      <select name="assignment_id" class="form-select">
+        {% for assignment in assignments %}
+        <option
+          value="{{ assignment.id }}"
+          {%
+          if
+          selected_assignment
+          and
+          assignment.id=""
+          ="selected_assignment.id"
+          %}selected{%
+          endif
+          %}
+        >
+          {{ assignment.title }}
+        </option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="col-md-4">
+      <button class="btn btn-primary px-4">Load Submissions</button>
+    </div>
+  </form>
+</article>
+
+<article class="app-card p-3">
+  <div class="table-responsive">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Student</th>
+          <th>Status</th>
+          <th>File</th>
+          <th>Marks</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for row in rows %}
+        <tr>
+          <td>{{ row.student.user.name }}</td>
+          <td>
+            <span
+              class="badge status-badge {{ 'pending' if row.status == 'Not Submitted' else ('late' if row.status == 'Late' else 'submitted') }}"
+            >
+              {{ row.status }}
+            </span>
+          </td>
+          <td>
+            {% if row.submission %}
+            <a
+              href="{{ url_for('core.download_file', filename=row.submission.file_path) }}"
+              class="btn btn-soft btn-sm px-3"
+              >Download</a
+            >
+            {% else %}
+            <span class="text-muted-soft">-</span>
+            {% endif %}
+          </td>
+          <td>
+            {{ row.submission.marks if row.submission and row.submission.marks
+            is not none else '-' }}
+          </td>
+          <td>
+            {% if row.submission %}
+            <a
+              href="{{ url_for('teacher.grade_submission', submission_id=row.submission.id) }}"
+              class="btn btn-primary btn-sm"
+              >Grade</a
+            >
+            {% else %}
+            <span class="text-muted-soft">-</span>
+            {% endif %}
+          </td>
+        </tr>
+        {% else %}
+        <tr>
+          <td colspan="5" class="text-center text-muted-soft">
+            No submissions data.
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</article>
+{% endblock %}

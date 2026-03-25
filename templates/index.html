@@ -1,0 +1,37 @@
+{% extends 'base.html' %} {% block title %} - Home{% endblock %} {% block
+content %}
+<section class="app-card p-5 mt-3">
+  <div class="row align-items-center g-4">
+    <div class="col-lg-7">
+      <span class="badge status-badge submitted mb-3"
+        >Smart Classroom Management System</span
+      >
+      <h1 class="display-5 fw-bold">
+        A modern classroom workspace for teachers and students.
+      </h1>
+      <p class="lead text-muted-soft mt-3">
+        Manage attendance, assignments, grading, and analytics through a clean
+        and intuitive experience.
+      </p>
+      <div class="d-flex gap-2 mt-3">
+        <a href="{{ url_for('auth.register') }}" class="btn btn-primary btn-lg"
+          >Get Started</a
+        >
+        <a href="{{ url_for('auth.login') }}" class="btn btn-soft btn-lg px-4"
+          >Login</a
+        >
+      </div>
+    </div>
+    <div class="col-lg-5">
+      <article class="app-card p-3">
+        <h5 class="mb-2">Why you'll love it</h5>
+        <ul class="mb-0 text-muted-soft">
+          <li>Faster attendance and assignment workflows</li>
+          <li>Role-based dashboards with clear actions</li>
+          <li>Interactive analytics for better decisions</li>
+        </ul>
+      </article>
+    </div>
+  </div>
+</section>
+{% endblock %}

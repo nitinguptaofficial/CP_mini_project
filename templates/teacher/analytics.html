@@ -1,0 +1,128 @@
+{% extends 'base.html' %} {% block title %} - Teacher Analytics{% endblock %} {%
+block content %}
+<section class="page-header">
+  <div>
+    <h1 class="page-title">Teacher Analytics</h1>
+    <p class="text-muted-soft mb-0">
+      Understand engagement and performance trends with actionable insights.
+    </p>
+  </div>
+  <div class="d-flex gap-2">
+    <input
+      type="date"
+      class="form-control"
+      style="max-width: 170px"
+      aria-label="From date"
+    />
+    <input
+      type="date"
+      class="form-control"
+      style="max-width: 170px"
+      aria-label="To date"
+    />
+  </div>
+</section>
+
+<div class="row g-3 mb-3">
+  <div class="col-lg-4">
+    <article class="app-card kpi-card h-100">
+      <div class="kpi-label">Class Average</div>
+      <div class="kpi-value">{{ data.class_average }}</div>
+    </article>
+  </div>
+  <div class="col-lg-4">
+    <article class="app-card kpi-card h-100">
+      <div class="kpi-label">Submission Rate</div>
+      <div class="kpi-value">{{ data.submission_rate }}%</div>
+    </article>
+  </div>
+  <div class="col-lg-4">
+    <article class="app-card kpi-card h-100">
+      <div class="kpi-label">Low Attendance Students</div>
+      <div class="kpi-value">{{ data.low_attendance|length }}</div>
+    </article>
+  </div>
+</div>
+
+<article class="toast-custom mb-3">
+  <strong>Insight:</strong>
+  Attendance dropped for {{ data.low_attendance|length }} students. Consider a
+  reminder session this week.
+</article>
+
+<div class="row g-3">
+  <div class="col-lg-6">
+    <article class="app-card p-3 h-100">
+      <h5 class="mb-3">Top Performing Students</h5>
+      <canvas id="topPerformerChart" height="220"></canvas>
+    </article>
+  </div>
+  <div class="col-lg-6">
+    <article class="app-card p-3 h-100">
+      <h5 class="mb-3">Low Attendance (%)</h5>
+      <canvas id="lowAttendanceChart" height="220"></canvas>
+    </article>
+  </div>
+</div>
+
+<script id="top-names-data" type="application/json">
+  {{ data.top_performers | map(attribute="name") | list | tojson }}
+</script>
+<script id="top-scores-data" type="application/json">
+  {{ data.top_performers | map(attribute="avg") | list | tojson }}
+</script>
+<script id="low-names-data" type="application/json">
+  {{ data.low_attendance | map(attribute="name") | list | tojson }}
+</script>
+<script id="low-values-data" type="application/json">
+  {{ data.low_attendance | map(attribute="percent") | list | tojson }}
+</script>
+{% endblock %} {% block scripts %}
+<script>
+  const topNames = JSON.parse(
+    document.getElementById("top-names-data")?.textContent || "[]",
+  );
+  const topScores = JSON.parse(
+    document.getElementById("top-scores-data")?.textContent || "[]",
+  );
+
+  const lowNames = JSON.parse(
+    document.getElementById("low-names-data")?.textContent || "[]",
+  );
+  const lowValues = JSON.parse(
+    document.getElementById("low-values-data")?.textContent || "[]",
+  );
+
+  new Chart(document.getElementById("topPerformerChart"), {
+    type: "bar",
+    data: {
+      labels: topNames,
+      datasets: [
+        {
+          label: "Average Marks",
+          data: topScores,
+          backgroundColor: "#4f46e5",
+          borderRadius: 10,
+        },
+      ],
+    },
+    options: { responsive: true, plugins: { legend: { display: false } } },
+  });
+
+  new Chart(document.getElementById("lowAttendanceChart"), {
+    type: "bar",
+    data: {
+      labels: lowNames,
+      datasets: [
+        {
+          label: "Attendance %",
+          data: lowValues,
+          backgroundColor: "#ef4444",
+          borderRadius: 10,
+        },
+      ],
+    },
+    options: { responsive: true, plugins: { legend: { display: false } } },
+  });
+</script>
+{% endblock %}

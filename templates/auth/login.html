@@ -1,0 +1,49 @@
+{% extends 'base.html' %} {% block title %} - Login{% endblock %} {% block
+content %}
+<section class="auth-shell">
+  <article class="auth-visual">
+    <p class="mb-2 text-uppercase small">Welcome Back</p>
+    <h1 class="display-6 fw-bold">Manage classes with clarity and speed.</h1>
+    <p class="mt-3 mb-0">
+      Track attendance, monitor submissions, and deliver feedback in one smart
+      workspace.
+    </p>
+  </article>
+
+  <article class="auth-form-wrap">
+    <h2 class="h4 fw-bold mb-1">Sign in to Smart Classroom</h2>
+    <p class="text-muted-soft mb-4">
+      Continue your teaching and learning journey.
+    </p>
+
+    <form method="POST" novalidate>
+      {{ form.hidden_tag() }}
+      <div class="mb-3">
+        {{ form.email.label(class='form-label') }} {{
+        form.email(class='form-control auth-input' + (' is-invalid
+        invalid-shake' if form.email.errors else ''),
+        placeholder='name@college.edu') }} {% for error in form.email.errors %}
+        <div class="invalid-feedback d-block">{{ error }}</div>
+        {% endfor %}
+      </div>
+
+      <div class="mb-3">
+        {{ form.password.label(class='form-label') }} {{
+        form.password(class='form-control auth-input' + (' is-invalid
+        invalid-shake' if form.password.errors else ''), placeholder='••••••••')
+        }} {% for error in form.password.errors %}
+        <div class="invalid-feedback d-block">{{ error }}</div>
+        {% endfor %}
+      </div>
+
+      {{ form.submit(class='btn btn-primary w-100 py-2') }}
+      <p class="text-muted-soft mt-3 mb-0">
+        New here?
+        <a class="text-decoration-none" href="{{ url_for('auth.register') }}"
+          >Create an account</a
+        >
+      </p>
+    </form>
+  </article>
+</section>
+{% endblock %}

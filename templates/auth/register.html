@@ -1,0 +1,108 @@
+{% extends 'base.html' %} {% block title %} - Register{% endblock %} {% block
+content %}
+<section class="auth-shell">
+  <article class="auth-visual">
+    <p class="mb-2 text-uppercase small">Create Account</p>
+    <h1 class="display-6 fw-bold">Build smarter classroom workflows.</h1>
+    <p class="mt-3 mb-0">
+      Whether you're teaching or learning, get assignments, attendance, grades,
+      and insights in one place.
+    </p>
+  </article>
+
+  <article class="auth-form-wrap">
+    <h2 class="h4 fw-bold mb-1">Get started in minutes</h2>
+    <p class="text-muted-soft mb-4">
+      Choose your role and personalize your workspace.
+    </p>
+
+    <form method="POST" id="register-form" novalidate>
+      {{ form.hidden_tag() }}
+      <div class="row">
+        <div class="col-md-6 mb-3">
+          {{ form.name.label(class='form-label') }} {{
+          form.name(class='form-control auth-input' + (' is-invalid
+          invalid-shake' if form.name.errors else ''), placeholder='Aarav
+          Sharma') }} {% for error in form.name.errors %}
+          <div class="invalid-feedback d-block">{{ error }}</div>
+          {% endfor %}
+        </div>
+        <div class="col-md-6 mb-3">
+          {{ form.email.label(class='form-label') }} {{
+          form.email(class='form-control auth-input' + (' is-invalid
+          invalid-shake' if form.email.errors else ''),
+          placeholder='name@college.edu') }} {% for error in form.email.errors
+          %}
+          <div class="invalid-feedback d-block">{{ error }}</div>
+          {% endfor %}
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-6 mb-3">
+          {{ form.password.label(class='form-label') }} {{
+          form.password(class='form-control auth-input' + (' is-invalid
+          invalid-shake' if form.password.errors else ''), placeholder='Min 6
+          characters') }} {% for error in form.password.errors %}
+          <div class="invalid-feedback d-block">{{ error }}</div>
+          {% endfor %}
+        </div>
+        <div class="col-md-6 mb-3">
+          {{ form.confirm_password.label(class='form-label') }} {{
+          form.confirm_password(class='form-control auth-input' + (' is-invalid
+          invalid-shake' if form.confirm_password.errors else ''),
+          placeholder='Confirm password') }} {% for error in
+          form.confirm_password.errors %}
+          <div class="invalid-feedback d-block">{{ error }}</div>
+          {% endfor %}
+        </div>
+      </div>
+
+      <div class="mb-3">
+        {{ form.role.label(class='form-label') }} {{
+        form.role(class='form-select', id='role-select') }}
+      </div>
+
+      <div class="row">
+        <div class="col-md-6 mb-3" id="class-field">
+          {{ form.class_name.label(class='form-label') }} {{
+          form.class_name(class='form-control', placeholder='BCA-1') }}
+          <div class="form-hint">Required for student accounts.</div>
+        </div>
+        <div class="col-md-6 mb-3 d-none" id="subject-field">
+          {{ form.subject.label(class='form-label') }} {{
+          form.subject(class='form-control', placeholder='Computer Science') }}
+          <div class="form-hint">Required for teacher accounts.</div>
+        </div>
+      </div>
+
+      {{ form.submit(class='btn btn-success w-100 py-2') }}
+      <p class="text-muted-soft mt-3 mb-0">
+        Already have an account?
+        <a class="text-decoration-none" href="{{ url_for('auth.login') }}"
+          >Sign in</a
+        >
+      </p>
+    </form>
+  </article>
+</section>
+{% endblock %} {% block scripts %}
+<script>
+  const roleSelect = document.getElementById("role-select");
+  const classField = document.getElementById("class-field");
+  const subjectField = document.getElementById("subject-field");
+
+  function toggleRoleFields() {
+    if (roleSelect.value === "Teacher") {
+      classField.classList.add("d-none");
+      subjectField.classList.remove("d-none");
+    } else {
+      subjectField.classList.add("d-none");
+      classField.classList.remove("d-none");
+    }
+  }
+
+  roleSelect.addEventListener("change", toggleRoleFields);
+  toggleRoleFields();
+</script>
+{% endblock %}

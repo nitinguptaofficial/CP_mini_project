@@ -1,0 +1,55 @@
+{% extends 'base.html' %} {% block title %} - Grade Submission{% endblock %} {%
+block content %}
+<section class="page-header">
+  <div>
+    <h1 class="page-title">Grade Submission</h1>
+    <p class="text-muted-soft mb-0">
+      Evaluate student work and provide constructive feedback.
+    </p>
+  </div>
+</section>
+
+<div class="row justify-content-center">
+  <div class="col-lg-8">
+    <article class="app-card p-3">
+      <div class="small text-muted-soft mb-3">
+        <div>
+          <strong>Student:</strong> {{ submission.student_user.user.name }}
+        </div>
+        <div>
+          <strong>Assignment:</strong> {{ submission.assignment.title }}
+        </div>
+        <div>
+          <strong>Max Marks:</strong> {{ submission.assignment.max_marks }}
+        </div>
+      </div>
+      <a
+        class="btn btn-soft btn-sm mb-3"
+        href="{{ url_for('core.download_file', filename=submission.file_path) }}"
+        >Download File</a
+      >
+
+      <form method="POST">
+        {{ form.hidden_tag() }}
+        <div class="mb-3">
+          {{ form.marks.label(class='form-label') }} {{
+          form.marks(class='form-control') }}
+        </div>
+        <div class="mb-3">
+          {{ form.feedback.label(class='form-label') }} {{
+          form.feedback(class='form-control', rows=4, placeholder='Share
+          strengths and next improvement steps...') }}
+        </div>
+        <div class="d-flex gap-2">
+          {{ form.submit(class='btn btn-success') }}
+          <a
+            href="{{ url_for('teacher.submissions', assignment_id=submission.assignment_id) }}"
+            class="btn btn-soft px-3"
+            >Back</a
+          >
+        </div>
+      </form>
+    </article>
+  </div>
+</div>
+{% endblock %}
