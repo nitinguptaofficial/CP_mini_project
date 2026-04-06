@@ -17,15 +17,7 @@ content %}
         {% for assignment in assignments %}
         <option
           value="{{ assignment.id }}"
-          {%
-          if
-          selected_assignment
-          and
-          assignment.id=""
-          ="selected_assignment.id"
-          %}selected{%
-          endif
-          %}
+          {% if selected_assignment and assignment.id == selected_assignment.id %}selected{% endif %}
         >
           {{ assignment.title }}
         </option>
