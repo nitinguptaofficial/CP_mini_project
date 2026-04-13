@@ -14,3 +14,5 @@ class Config:
     MAX_CONTENT_LENGTH = 5 * 1024 * 1024
     UPLOAD_FOLDER = str(BASE_DIR / "uploads")
     ALLOWED_EXTENSIONS = {"pdf", "doc", "docx"}
+    LOCAL_MODEL_BASE_URL = os.environ.get("LOCAL_MODEL_BASE_URL", "http://localhost:12434")
+    LOCAL_MODEL_NAME = os.environ.get("LOCAL_MODEL_NAME", "ai/gemma3-qat:latest")

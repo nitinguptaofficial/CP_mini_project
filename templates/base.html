@@ -38,13 +38,15 @@
           ('teacher.attendance', 'Attendance', 'bi-calendar-check'),
           ('teacher.assignments', 'Assignments', 'bi-journal-richtext'),
           ('teacher.submissions', 'Submissions', 'bi-folder-check'),
-          ('teacher.analytics', 'Analytics', 'bi-graph-up') ] %} {% else %} {%
-          set nav = [ ('student.dashboard', 'Dashboard', 'bi-speedometer2'),
+          ('teacher.analytics', 'Analytics', 'bi-graph-up'),
+          ('chatbot.chat_interface', 'AI Assistant', 'bi-robot') ] %} {% else %}
+          {% set nav = [ ('student.dashboard', 'Dashboard', 'bi-speedometer2'),
           ('student.attendance', 'Attendance', 'bi-calendar-check'),
           ('student.assignments', 'Assignments', 'bi-journal-richtext'),
           ('student.grades', 'Grades', 'bi-award'), ('student.analytics',
-          'Analytics', 'bi-graph-up') ] %} {% endif %} {% for endpoint, label,
-          icon in nav %}
+          'Analytics', 'bi-graph-up'), ('chatbot.chat_interface', 'AI
+          Assistant', 'bi-robot') ] %} {% endif %} {% for endpoint, label, icon
+          in nav %}
           <a
             class="nav-link-item {% if request.endpoint == endpoint %}active{% endif %}"
             href="{{ url_for(endpoint) }}"
