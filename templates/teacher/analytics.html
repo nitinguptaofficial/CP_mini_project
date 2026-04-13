@@ -54,75 +54,22 @@ block content %}
   <div class="col-lg-6">
     <article class="app-card p-3 h-100">
       <h5 class="mb-3">Top Performing Students</h5>
-      <canvas id="topPerformerChart" height="220"></canvas>
+      <img
+        src="data:image/png;base64,{{ data.top_chart }}"
+        alt="Top Performing Students Chart"
+        class="img-fluid w-100"
+      />
     </article>
   </div>
   <div class="col-lg-6">
     <article class="app-card p-3 h-100">
       <h5 class="mb-3">Low Attendance (%)</h5>
-      <canvas id="lowAttendanceChart" height="220"></canvas>
+      <img
+        src="data:image/png;base64,{{ data.low_chart }}"
+        alt="Low Attendance Chart"
+        class="img-fluid w-100"
+      />
     </article>
   </div>
 </div>
-
-<script id="top-names-data" type="application/json">
-  {{ data.top_performers | map(attribute="name") | list | tojson }}
-</script>
-<script id="top-scores-data" type="application/json">
-  {{ data.top_performers | map(attribute="avg") | list | tojson }}
-</script>
-<script id="low-names-data" type="application/json">
-  {{ data.low_attendance | map(attribute="name") | list | tojson }}
-</script>
-<script id="low-values-data" type="application/json">
-  {{ data.low_attendance | map(attribute="percent") | list | tojson }}
-</script>
-{% endblock %} {% block scripts %}
-<script>
-  const topNames = JSON.parse(
-    document.getElementById("top-names-data")?.textContent || "[]",
-  );
-  const topScores = JSON.parse(
-    document.getElementById("top-scores-data")?.textContent || "[]",
-  );
-
-  const lowNames = JSON.parse(
-    document.getElementById("low-names-data")?.textContent || "[]",
-  );
-  const lowValues = JSON.parse(
-    document.getElementById("low-values-data")?.textContent || "[]",
-  );
-
-  new Chart(document.getElementById("topPerformerChart"), {
-    type: "bar",
-    data: {
-      labels: topNames,
-      datasets: [
-        {
-          label: "Average Marks",
-          data: topScores,
-          backgroundColor: "#4f46e5",
-          borderRadius: 10,
-        },
-      ],
-    },
-    options: { responsive: true, plugins: { legend: { display: false } } },
-  });
-
-  new Chart(document.getElementById("lowAttendanceChart"), {
-    type: "bar",
-    data: {
-      labels: lowNames,
-      datasets: [
-        {
-          label: "Attendance %",
-          data: lowValues,
-          backgroundColor: "#ef4444",
-          borderRadius: 10,
-        },
-      ],
-    },
-    options: { responsive: true, plugins: { legend: { display: false } } },
-  });
-</script>
 {% endblock %}

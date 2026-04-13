@@ -13,13 +13,21 @@ block content %}
   <div class="col-lg-6">
     <article class="app-card p-3 h-100">
       <h5 class="mb-3">Performance Trend</h5>
-      <canvas id="performanceChart" height="220"></canvas>
+      <img
+        src="data:image/png;base64,{{ data.perf_chart }}"
+        alt="Performance Trend Chart"
+        class="img-fluid w-100"
+      />
     </article>
   </div>
   <div class="col-lg-6">
     <article class="app-card p-3 h-100">
       <h5 class="mb-3">Subject-wise Comparison</h5>
-      <canvas id="subjectChart" height="220"></canvas>
+      <img
+        src="data:image/png;base64,{{ data.subj_chart }}"
+        alt="Subject Comparison Chart"
+        class="img-fluid w-100"
+      />
     </article>
   </div>
 </div>
@@ -32,67 +40,4 @@ block content %}
     {% endfor %}
   </ul>
 </article>
-
-<script id="performance-labels-data" type="application/json">
-  {{ data.performance_labels | tojson }}
-</script>
-<script id="performance-values-data" type="application/json">
-  {{ data.performance_values | tojson }}
-</script>
-<script id="subject-labels-data" type="application/json">
-  {{ data.subject_labels | tojson }}
-</script>
-<script id="subject-values-data" type="application/json">
-  {{ data.subject_values | tojson }}
-</script>
-{% endblock %} {% block scripts %}
-<script>
-  const performanceLabels = JSON.parse(
-    document.getElementById("performance-labels-data")?.textContent || "[]",
-  );
-  const performanceValues = JSON.parse(
-    document.getElementById("performance-values-data")?.textContent || "[]",
-  );
-
-  const subjectLabels = JSON.parse(
-    document.getElementById("subject-labels-data")?.textContent || "[]",
-  );
-  const subjectValues = JSON.parse(
-    document.getElementById("subject-values-data")?.textContent || "[]",
-  );
-
-  new Chart(document.getElementById("performanceChart"), {
-    type: "line",
-    data: {
-      labels: performanceLabels,
-      datasets: [
-        {
-          label: "Marks",
-          data: performanceValues,
-          borderColor: "#4f46e5",
-          backgroundColor: "rgba(79,70,229,0.2)",
-          fill: true,
-          tension: 0.2,
-        },
-      ],
-    },
-    options: { responsive: true, plugins: { legend: { display: false } } },
-  });
-
-  new Chart(document.getElementById("subjectChart"), {
-    type: "bar",
-    data: {
-      labels: subjectLabels,
-      datasets: [
-        {
-          label: "Average Marks",
-          data: subjectValues,
-          backgroundColor: "#8b5cf6",
-          borderRadius: 10,
-        },
-      ],
-    },
-    options: { responsive: true, plugins: { legend: { display: false } } },
-  });
-</script>
 {% endblock %}

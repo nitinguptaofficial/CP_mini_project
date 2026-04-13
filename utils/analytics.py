@@ -2,6 +2,7 @@ from collections import defaultdict
 from datetime import datetime
 
 from models import Assignment, Attendance, StudentProfile, Submission, User
+from utils.chart_utils import bar_chart, line_chart
 
 
 def attendance_percentage_for_student(student_id):
@@ -88,11 +89,29 @@ def teacher_analytics_data(teacher_id):
     total_submitted = Submission.query.filter(Submission.assignment_id.in_(assignment_ids)).count() if assignment_ids else 0
     submission_rate = round((total_submitted / total_possible) * 100, 2) if total_possible else 0
 
+    # ── generate matplotlib charts ──
+    top_chart = bar_chart(
+        [p["name"] for p in top_performers],
+        [p["avg"] for p in top_performers],
+        title="Top Performing Students",
+        ylabel="Average Marks",
+        color="#4f46e5",
+    )
+    low_chart = bar_chart(
+        [s["name"] for s in low_attendance],
+        [s["percent"] for s in low_attendance],
+        title="Low Attendance (%)",
+        ylabel="Attendance %",
+        color="#ef4444",
+    )
+
     return {
         "class_average": class_average,
         "top_performers": top_performers,
         "low_attendance": low_attendance,
         "submission_rate": submission_rate,
+        "top_chart": top_chart,
+        "low_chart": low_chart,
     }
 
 
@@ -149,10 +168,28 @@ def student_analytics_data(student_id):
     else:
         suggestions.append("No graded submissions yet. Submit assignments before deadline.")
 
+    # ── generate matplotlib charts ──
+    perf_chart = line_chart(
+        performance_labels,
+        performance_values,
+        title="Performance Trend",
+        ylabel="Marks",
+        color="#4f46e5",
+    )
+    subj_chart = bar_chart(
+        subject_labels,
+        subject_values,
+        title="Subject-wise Comparison",
+        ylabel="Average Marks",
+        color="#8b5cf6",
+    )
+
     return {
         "performance_labels": performance_labels,
         "performance_values": performance_values,
         "subject_labels": subject_labels,
         "subject_values": subject_values,
         "suggestions": suggestions,
+        "perf_chart": perf_chart,
+        "subj_chart": subj_chart,
     }
