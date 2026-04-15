@@ -1,7 +1,7 @@
 from collections import defaultdict
 from datetime import datetime
 
-from models import Assignment, Attendance, StudentProfile, Submission, User
+from models import Assignment, Attendance, StudentProfile, Submission, TeacherProfile, User
 from utils.chart_utils import bar_chart, line_chart
 
 
@@ -41,6 +41,9 @@ def teacher_dashboard_stats(teacher_id):
 
 
 def teacher_analytics_data(teacher_id):
+    teacher = TeacherProfile.query.filter_by(user_id=teacher_id).first()
+    teacher_subject = teacher.subject if teacher else None
+
     assignments = Assignment.query.filter_by(teacher_id=teacher_id).all()
     assignment_ids = [item.id for item in assignments]
 
@@ -71,12 +74,25 @@ def teacher_analytics_data(teacher_id):
     top_performers = sorted(top_performers, key=lambda x: x["avg"], reverse=True)[:5]
 
     low_attendance = []
+    attendance_data = []
     for profile in StudentProfile.query.all():
-        total = Attendance.query.filter_by(student_id=profile.user_id).count()
+        query = Attendance.query.filter_by(student_id=profile.user_id)
+        if teacher_subject:
+            query = query.filter_by(subject=teacher_subject)
+            
+        total = query.count()
         if total == 0:
             continue
-        present = Attendance.query.filter_by(student_id=profile.user_id, status="Present").count()
+            
+        present = query.filter_by(status="Present").count()
         percent = round((present / total) * 100, 2)
+        
+        attendance_data.append(
+            {
+                "name": profile.user.name,
+                "percent": percent,
+            }
+        )
         if percent < 75:
             low_attendance.append(
                 {
@@ -84,6 +100,9 @@ def teacher_analytics_data(teacher_id):
                     "percent": percent,
                 }
             )
+
+    attendance_data = sorted(attendance_data, key=lambda x: x["percent"])
+    chart_data = attendance_data[:5] # Show 5 lowest attendances
 
     total_possible = len(assignments) * StudentProfile.query.count()
     total_submitted = Submission.query.filter(Submission.assignment_id.in_(assignment_ids)).count() if assignment_ids else 0
@@ -98,9 +117,9 @@ def teacher_analytics_data(teacher_id):
         color="#4f46e5",
     )
     low_chart = bar_chart(
-        [s["name"] for s in low_attendance],
-        [s["percent"] for s in low_attendance],
-        title="Low Attendance (%)",
+        [s["name"] for s in chart_data],
+        [s["percent"] for s in chart_data],
+        title="Lowest Attendance (%)",
         ylabel="Attendance %",
         color="#ef4444",
     )
