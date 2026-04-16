@@ -1,8 +1,12 @@
+import os
 from datetime import datetime, timedelta
 
 from app import app
 from models import Assignment, Attendance, StudentProfile, Submission, TeacherProfile, User
 from utils.extensions import bcrypt, db
+
+
+SEED_PASSWORD = os.environ.get("SEED_PASSWORD")
 
 
 # Seed script for quick demo during viva.
@@ -26,12 +30,15 @@ def create_user(name, email, password, role, class_name=None, subject=None):
 
 def seed():
     with app.app_context():
+        if not SEED_PASSWORD:
+            raise RuntimeError("Set SEED_PASSWORD before running the seed script.")
+
         db.create_all()
 
         teacher1 = create_user(
             name="Dr. Mehta",
             email="teacher1@college.com",
-            password="password123",
+            password=SEED_PASSWORD,
             role="Teacher",
             subject="Data Structures",
         )
@@ -39,7 +46,7 @@ def seed():
         teacher2 = create_user(
             name="Prof. Gupta",
             email="teacher2@college.com",
-            password="password123",
+            password=SEED_PASSWORD,
             role="Teacher",
             subject="Database Systems",
         )
@@ -47,7 +54,7 @@ def seed():
         student1 = create_user(
             name="Aman Sharma",
             email="student1@college.com",
-            password="password123",
+            password=SEED_PASSWORD,
             role="Student",
             class_name="BCA-2",
         )
@@ -55,7 +62,7 @@ def seed():
         student2 = create_user(
             name="Riya Verma",
             email="student2@college.com",
-            password="password123",
+            password=SEED_PASSWORD,
             role="Student",
             class_name="BCA-2",
         )
@@ -63,7 +70,7 @@ def seed():
         student3 = create_user(
             name="Karan Singh",
             email="student3@college.com",
-            password="password123",
+            password=SEED_PASSWORD,
             role="Student",
             class_name="BCA-2",
         )
@@ -71,7 +78,7 @@ def seed():
         student4 = create_user(
             name="Neha Gupta",
             email="student4@college.com",
-            password="password123",
+            password=SEED_PASSWORD,
             role="Student",
             class_name="BCA-3",
         )

@@ -34,6 +34,7 @@ A beginner-friendly, modular college management web app with role-based dashboar
 cd /home/nitin/Documents/college/CP_MINI_PROJECT/project
 python3 -m venv venv
 source venv/bin/activate
+export SECRET_KEY="your-local-secret-key"
 pip install -r requirements.txt
 python app.py
 ```
@@ -45,14 +46,20 @@ Open: `http://127.0.0.1:5000`
 ```bash
 cd /home/nitin/Documents/college/CP_MINI_PROJECT/project
 source ../venv/bin/activate
+export SEED_PASSWORD="your-local-demo-password"
 python seed_dummy_data.py
 ```
 
 ## Default Seed Accounts
 
-- Teacher: `teacher1@college.com` / `password123`
-- Student: `student1@college.com` / `password123`
-- Student: `student2@college.com` / `password123`
+The seed script creates demo users, but the password is read from `SEED_PASSWORD` so it is not stored in the repo.
+
+## Environment Variables
+
+Set these before running the app locally:
+
+- `SECRET_KEY`: Flask session secret
+- `SEED_PASSWORD`: Password used by the demo seed script
 
 ## Notes for Viva
 
